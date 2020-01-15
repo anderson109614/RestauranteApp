@@ -11,6 +11,6 @@ export class LoginService {
   ip = con.ipser;
   GenerarLogin(log: Login)
   {
-    return this.http.post<Login>(this.ip+'Usuarios/Usuarios.php', log);
+    return this.http.post<Login>(this.ip+'ServiciosApp/SerPersonal/Personal.php', log);
   }
 }

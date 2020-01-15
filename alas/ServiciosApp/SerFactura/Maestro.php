@@ -2,55 +2,44 @@
 ob_start();
 include("../coneccion.php");
 $dbConn =  connect($db);
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    try {
-      
-            $sql = $dbConn->prepare("SELECT * FROM `platos`");
-
-           
-            
-            $sql->execute();
-            $sql->setFetchMode(PDO::FETCH_ASSOC);
-            header("HTTP/1.1 200 OK");
-            echo json_encode($sql->fetchAll());
-        
-    } catch (Exception $e) {
-        echo 'Excepción capturada: ',  $e->getMessage(), "\n";
-    }
-}
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    /*
+    
     try {
         //$input = $_POST;
         $input = (array) json_decode(file_get_contents('php://input'), TRUE);
-        $sql = "INSERT INTO prestamos_laboratorios(
-            id_laboratorio,
-            Fecha,
-            Descripcion
+        $sql = "INSERT INTO maestro_factura(
+            ced_cli_per,
+            ced_per_per,
+            cod_mesa_per,
+            fech_fac,
+            estado
         )
         VALUES(
-            :id_laboratorio,
-            NOW(),
-            :Descripcion
+            :ced_cli_per,
+            :ced_per_per,
+            :cod_mesa_per,
+            now(),
+            'Progreso'
         )";
         $statement = $dbConn->prepare($sql);
-        $statement->bindValue(':id_laboratorio', $input['idLab']);
-        $statement->bindValue(':Descripcion', $input['des']);
+        $statement->bindValue(':ced_cli_per', $input['CedCliente']);
+        $statement->bindValue(':ced_per_per', $input['CedUsuario']);
+        $statement->bindValue(':cod_mesa_per', $input['IdMesa']);
               
         // bindAllValues($statement, $input,-1);
         $statement->execute();
         $postId = $dbConn->lastInsertId();
         if ($postId) {
-            $input['id'] = $postId;
+            $input['Coigo'] = $postId;
             header("HTTP/1.1 200 OK");
             echo json_encode($input);
         }
     } catch (Exception $e) {
         echo 'Excepción capturada: ',  $e->getMessage(), "\n";
     }
-    */
+    
 }
 if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
     /*

@@ -19,7 +19,7 @@ export class NewClientesPage implements OnInit {
   }
   GuardarCLI(){
     let cli:Cliente={
-      Id:0,
+      
       Cedula:(<HTMLSelectElement>document.getElementById("txtCedulaN")).value,
       Nombre:(<HTMLSelectElement>document.getElementById("txtNombreN")).value,
       Apellido:(<HTMLSelectElement>document.getElementById("txtApellidoN")).value,
@@ -40,6 +40,7 @@ export class NewClientesPage implements OnInit {
     }else{
       this.serCli.PostClientes(cli).subscribe(
         res => {
+          console.log(res);
           this.modalController.dismiss({cliente:res});
          
         },

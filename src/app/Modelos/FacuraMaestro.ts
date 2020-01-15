@@ -1,6 +1,6 @@
 export interface FacturaMaestro{
-    Id: number,
-    Fecha: string,
-    IdCliente: number,
-    Total:number
+    Coigo: number,
+    IdMesa:number,
+    CedCliente: string,
+    CedUsuario:string
 }

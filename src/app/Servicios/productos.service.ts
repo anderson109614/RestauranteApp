@@ -10,7 +10,9 @@ export class ProductosService {
   ip = con.ipser;
   constructor(private http:HttpClient) { }
   getProductos(){
-    return this.http.get(this.ip + 'Productos/Productos.php')
+    return this.http.get(this.ip + 'ServiciosApp/SerPlatos/Platos.php')
   }
-
+  getMesas(){
+    return this.http.get(this.ip + 'ServiciosApp/SerMesas/Mesas.php')
+  }
 }

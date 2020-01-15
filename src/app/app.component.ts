@@ -5,7 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import {LoginService} from './Servicios/login.service';
 import {LocalStorageService} from 'ngx-webstorage';
-import {Login} from './Modelos/Login'
+import {Login} from './Modelos/Login';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -39,7 +39,7 @@ export class AppComponent {
     
   }
   MostrarLogin(estado:boolean){
-    console.log('entro');
+    //console.log('entro');
     if(estado){
       (<HTMLDivElement>document.getElementById('DivPagina')).style.display='none';
     (<HTMLDivElement>document.getElementById('DivLogin')).style.display='block';
@@ -55,22 +55,22 @@ export class AppComponent {
     var usr= (<HTMLInputElement>document.getElementById("txt-login-username")).value;
     var cont= (<HTMLInputElement>document.getElementById("txt-login-password")).value;
     let log:Login={
-      Id:0,
-      Cedula:usr,
-      Nombre:'',
-      Apellido:'',
-      Telefono:'',
-      Direccion:'',
-      Contraseña:cont
+      ced_per:'0',
+      nom_per:'',
+      ape_per:'',
+      dir_per:'',
+      tip_per:'',
+      usuario:usr,
+      contrasenia:cont
 
     }
     this.loginService.GenerarLogin(log).subscribe(
       res => {
         try {
           console.log(res);
-          if(res[0].id!=0){
+          if(res[0].ced_per!='0'){
             this.MostrarLogin(false);
-           this.storage.store('Usuario',res[0]);
+            this.storage.store('Usuario',res[0]);
            
           //this.router.navigateByUrl('/home');
           } 

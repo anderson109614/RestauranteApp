@@ -9,9 +9,9 @@ export class ClientesService {
   ip = con.ipser;
   constructor(private http:HttpClient) { }
   getClientes(){
-    return this.http.get(this.ip + 'Clientes/Clientes.php')
+    return this.http.get(this.ip + 'ServiciosApp/SerClientes/Clientes.php')
   }
   PostClientes(cli:Cliente){
-    return this.http.post<Cliente>(this.ip + 'Clientes/Clientes.php',cli)
+    return this.http.post<Cliente>(this.ip + 'ServiciosApp/SerClientes/Clientes.php',cli)
   }
 }

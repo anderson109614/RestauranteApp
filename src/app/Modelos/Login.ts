@@ -1,10 +1,10 @@
 export interface Login{
-    Id:number,
-    Cedula:string,
-    Nombre:string,
-    Apellido:string,
-    Telefono:string,
-    Direccion:string,
-    Contraseña:string
+    ced_per:string,
+    nom_per:string,
+    ape_per:string,
+    dir_per:string,
+    tip_per:string,
+    usuario:string,
+    contrasenia:string
     
 }

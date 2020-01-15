@@ -9,7 +9,10 @@ import { Producto } from '../Modelos/Producto';
 import { ProductoFactura } from '../Modelos/ProductoFactura';
 import { ToastController } from '@ionic/angular';
 import { FacturaMaestro } from '../Modelos/FacuraMaestro';
-import { PedidosService } from '../Servicios/pedidos.service'
+import { PedidosService } from '../Servicios/pedidos.service';
+import { ProductosService } from '../Servicios/productos.service';
+import {Login} from '../Modelos/Login';
+import {Detalle} from '../Modelos/Detalle';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -20,7 +23,9 @@ export class HomePage {
   ProductoUso: Producto;
   total: number = 0;
   ListaProductosFactura: any = [];
-  constructor(private serPedido: PedidosService, private storage: LocalStorageService, public modalController: ModalController, public toastController: ToastController, ) { }
+  listaMesas: any = [];
+  idMesa: number = 0;
+  constructor(private serPro: ProductosService, private serPedido: PedidosService, private storage: LocalStorageService, public modalController: ModalController, public toastController: ToastController, ) { }
 
   async selCliente() {
     const modal = await this.modalController.create({
@@ -42,7 +47,7 @@ export class HomePage {
       }
 
     } catch (error) {
-      console.log('error');
+      console.log(error);
     }
 
   }
@@ -63,9 +68,27 @@ export class HomePage {
 
 
     } catch (error) {
-      console.log('error');
+      console.log(error);
     }
   }
+  ngOnInit() {
+    this.cargarMEsas();
+  }
+  cargarMEsas() {
+    this.serPro.getMesas().subscribe(
+      res => {
+        this.listaMesas = res;
+      },
+      err => console.log(err)
+    );
+
+  }
+
+  MesaSelected() {
+    let est = (<HTMLSelectElement>document.getElementById("selMesa")).value;
+    this.idMesa = Number.parseInt(est);
+  }
+
   cargarCliente() {
     (<HTMLSelectElement>document.getElementById("txtCedula")).value = this.ClienteUso.Cedula;
     (<HTMLSelectElement>document.getElementById("txtNombre")).value = this.ClienteUso.Nombre + ' ' + this.ClienteUso.Apellido;
@@ -90,7 +113,7 @@ export class HomePage {
           Cantidad: Number.parseFloat(cantidad) + cant,
           Precio: this.ProductoUso.Precio,
           SubTotal: (Number.parseFloat(cantidad) + cant) * this.ProductoUso.Precio,
-          Id_Maestro:''
+          Id_Maestro: ''
         }
 
         this.ListaProductosFactura.push(proaux);
@@ -155,38 +178,45 @@ export class HomePage {
   GuardarFactura() {
     if (this.ClienteUso != undefined) {
       if (this.ListaProductosFactura.length != 0) {
-        let mae: FacturaMaestro = {
-          Id: 0,
-          Fecha: '',
-          IdCliente: this.ClienteUso.Id,
-          Total: this.total
-        }
-        this.serPedido.GuardarMaestro(mae).subscribe(
-          res => {
-            for (let i = 0; i < this.ListaProductosFactura.length; i++) {
-              let pfaux:ProductoFactura={
-                Id: this.ListaProductosFactura[i].Id,
-                Nombre:  this.ListaProductosFactura[i].Nombre,
-                Cantidad:  this.ListaProductosFactura[i].Cantidad,
-                Precio:  this.ListaProductosFactura[i].Precio,
-                SubTotal:  this.ListaProductosFactura[i].SubTotal,
-                Id_Maestro:res.Id.toString()
+        if (this.idMesa != 0) {
+          let lg:Login=this.storage.retrieve('Usuario');
+          let mae: FacturaMaestro = {
+            Coigo: 0,
+            CedCliente:this.ClienteUso.Cedula,
+            CedUsuario:lg.ced_per,
+            IdMesa:this.idMesa
+          }
+          this.serPedido.GuardarMaestro(mae).subscribe(
+            res => {
+              for (let i = 0; i < this.ListaProductosFactura.length; i++) {
+                let pfaux:Detalle={
+                  cod_pla_per: this.ListaProductosFactura[i].Id,
+                  cantidad:  this.ListaProductosFactura[i].Cantidad,
+                  cod_fac_per: res.Coigo,
+                  precio:this.ListaProductosFactura[i].Precio
+                }
+                this.serPedido.GuardarDetalle(pfaux).subscribe(
+                  resr => {
+  
+                  },
+                  err => console.log(err)
+                );
+  
               }
-              this.serPedido.GuardarDetalle(pfaux).subscribe(
-                resr => {
-
-                },
-                err => console.log(err)
-              );
-
-            }
-           this.limpiar();
-           this.presentToast('Guardado Exitoso');
+             this.limpiar();
+             this.presentToast('Guardado Exitoso');
+  
+  
+            },
+            err => console.log(err)
+          );
 
 
-          },
-          err => console.log(err)
-        );
+        } else {
+          this.presentToast('Señeccione una mesa');
+
+        }
+
 
       } else {
         this.presentToast('Añada uno o mas productos a la factura');
@@ -195,12 +225,14 @@ export class HomePage {
       this.presentToast('Seleccione un cliente');
     }
   }
-  limpiar(){
-    this.ClienteUso=undefined;
-    this.ListaProductosFactura=[];
+  limpiar() {
+    this.ClienteUso = undefined;
+    this.idMesa=0;
+    this.ListaProductosFactura = [];
+    (<HTMLSelectElement>document.getElementById("selMesa")).value='';
     (<HTMLSelectElement>document.getElementById("txtCedula")).value = '';
     (<HTMLSelectElement>document.getElementById("txtNombre")).value = '';
-    (<HTMLSelectElement>document.getElementById("txtDireccion")).value ='';
+    (<HTMLSelectElement>document.getElementById("txtDireccion")).value = '';
     (<HTMLSelectElement>document.getElementById("txtTelefono")).value = '';
     this.colocarTotal();
   }

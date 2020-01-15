@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { con } from '../Modelos/Configuracion';
 import {FacturaMaestro} from '../Modelos/FacuraMaestro';
-import {ProductoFactura} from '../Modelos/ProductoFactura'
+import {Detalle} from '../Modelos/Detalle'
 @Injectable({
   providedIn: 'root'
 })
@@ -12,10 +12,10 @@ export class PedidosService {
   ip = con.ipser;
   GuardarMaestro(mae: FacturaMaestro)
   {
-    return this.http.post<FacturaMaestro>(this.ip+'Factura/Maestro.php', mae);
+    return this.http.post<FacturaMaestro>(this.ip+'ServiciosApp/SerFactura/Maestro.php', mae);
   }
-  GuardarDetalle(mae: ProductoFactura)
+  GuardarDetalle(mae: Detalle)
   {
-    return this.http.post<ProductoFactura>(this.ip+'Factura/Detalle.php', mae);
+    return this.http.post<Detalle>(this.ip+'ServiciosApp/SerFactura/Detalle.php', mae);
   }
 }

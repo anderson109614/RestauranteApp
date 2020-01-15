@@ -4,24 +4,32 @@ include("../coneccion.php");
 $dbConn =  connect($db);
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     try {
-        if (isset($_GET['id'])) {
+        if (isset($_GET['Cedula'])) {
             $sql = $dbConn->prepare(" SELECT
-            *
+            ced_cli as Cedula,
+            nom_cli as Nombre,
+            ape_cli as Apellido,
+            dir_cli as  Direccion,
+            telefono_cli as Telefono
         FROM
-            `clientes`
+            clientes
         WHERE
-            Id = :id");
-            $sql->bindValue(':id', $_GET['id']);
+        ced_cli = :Cedula");
+            $sql->bindValue(':Cedula', $_GET['Cedula']);
             
             $sql->execute();
             $sql->setFetchMode(PDO::FETCH_ASSOC);
             header("HTTP/1.1 200 OK");
             echo json_encode($sql->fetchAll());
         }else{
-            $sql = $dbConn->prepare(" SELECT
-            *
+            $sql = $dbConn->prepare("SELECT
+            ced_cli as Cedula,
+            nom_cli as Nombre,
+            ape_cli as Apellido,
+            dir_cli as  Direccion,
+            telefono_cli as Telefono
         FROM
-            `clientes`");
+            clientes");
                        
             $sql->execute();
             $sql->setFetchMode(PDO::FETCH_ASSOC);
@@ -39,20 +47,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //$input = $_POST;
         $input = (array) json_decode(file_get_contents('php://input'), TRUE);
         $sql = "INSERT INTO clientes(
-            
-            Cedula,
-            Nombre,
-            Apellido,
-            Telefono,
-            Direccion
+            ced_cli ,
+            nom_cli ,
+            ape_cli ,
+            dir_cli,
+            telefono_cli 
         )
         VALUES(
-            
-            :Cedula,
+             :Cedula,
             :Nombre,
             :Apellido,
-            :Telefono,
-            :Direccion
+            :Direccion,
+            :Telefono            
         )";
         $statement = $dbConn->prepare($sql);
         $statement->bindValue(':Cedula', $input['Cedula']);
@@ -63,12 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // bindAllValues($statement, $input,-1);
         $statement->execute();
-        $postId = $dbConn->lastInsertId();
-        if ($postId) {
-            $input['Id'] = $postId;
-            header("HTTP/1.1 200 OK");
-            echo json_encode($input);
-        }
+         header("HTTP/1.1 200 OK");
+          echo json_encode($input);
+       
     } catch (Exception $e) {
         echo 'Excepción capturada: ',  $e->getMessage(), "\n";
     }
